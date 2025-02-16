@@ -1,51 +1,69 @@
-import { Dimension, Direction, Position } from '../interfaces/genericInterface';
-import {
-  DEFAULT_TABLE_DIMENSION,
-  DIRECTION,
-  TABLE_ORIGIN,
-} from './../constants/constants';
-export class Table {
-  // A robot that is not on the table can choose to ignore the MOVE, LEFT, RIGHT and REPORT commands.
-  constructor(
-    private readonly _dimension?: Dimension,
-    private readonly _origin?: Position,
-  ) {
-    this._dimension = _dimension ?? DEFAULT_TABLE_DIMENSION;
-    this._origin = _origin ?? TABLE_ORIGIN;
+import { BadRequestException } from '@nestjs/common';
+import { Result } from 'src/application/result';
+import { ApplicationLogger } from 'src/infrastructure/logger';
+import { Dimension, Position } from '../interfaces/genericInterface';
+import { ITable } from 'src/interfaces/tableInterface';
+
+export class Table implements ITable {
+  private _dimension: Dimension;
+  private _origin: Position;
+  private readonly logger: ApplicationLogger;
+
+  constructor() {
+    this.logger = new ApplicationLogger('Table');
   }
 
-  get dimension() {
+  set dimension(dimension: Dimension) {
+    this._dimension = dimension;
+  }
+
+  set origin(origin: Position) {
+    this._origin = origin;
+  }
+
+  get dimension(): Dimension {
     return this._dimension;
   }
 
-  get origin() {
+  get origin(): Position {
     return this._origin;
   }
 
-  isValidPosition({ x, y }: Position): boolean {
-    if (!this.dimension) {
-      return false;
-    }
+  /**
+   * Checks if a given position is within the bounds of the table.
+   * @param position The position to validate.
+   * @returns True if the position is valid, false otherwise.
+   */
+  isValidPosition(position: Position): boolean {
+    const { x, y } = position;
     return (
-      x >= 0 && x < this.dimension.width && y >= 0 && y < this.dimension.height
+      x >= this.origin.x &&
+      x < this.dimension.width + this.origin.x &&
+      y >= this.origin.y &&
+      y < this.dimension.height + this.origin.y
     );
   }
 
-  getNextPosition(current: Position, direction: Direction) {
-    const movements = {
-      [DIRECTION.NORTH]: { x: 0, y: 1 },
-      [DIRECTION.SOUTH]: { x: 0, y: -1 },
-      [DIRECTION.EAST]: { x: 1, y: 1 },
-      [DIRECTION.WEST]: { x: -1, y: 1 },
-    };
-    const movement = movements[direction];
-    return {
-      x: current.x + movement.x,
-      y: current.y + movement.y,
-    };
+  /**
+   * Creates a new Table instance.  Uses the Result type to handle potential errors during table creation,
+   * specifically regarding invalid dimensions.
+   * @param dimension The dimensions of the table.
+   * @param origin The origin (top-left corner) of the table.
+   * @returns A Result object containing the Table instance on success, or an error on failure.
+   */
+  static create(): Result<Table> {
+    try {
+      const table = new Table();
+      return Result.ok(table);
+    } catch (error) {
+      return Result.fail<Table>((error as Error).message);
+    }
   }
 
-  private getKey(position: Position): string {
-    return `${position.x},${position.y}`;
+  private validateDimensions(dimension: Dimension): void {
+    if (dimension.height <= 0 || dimension.width <= 0) {
+      this.logger.error('Table dimensions must be positive');
+      throw new BadRequestException('Table dimensions must be positive');
+    }
   }
 }

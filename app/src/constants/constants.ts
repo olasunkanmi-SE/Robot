@@ -13,3 +13,8 @@ export enum DIRECTION {
   SOUTH = 'SOUTH',
   WEST = 'WEST',
 }
+
+export enum STEPS {
+  RIGHT = 1,
+  LEFT = -1,
+}

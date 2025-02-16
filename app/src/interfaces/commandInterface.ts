@@ -1,5 +1,13 @@
-import { Robot } from "../models/robot";
+import { Direction } from 'readline';
+import { Position } from './genericInterface';
+import { Robot } from 'src/models';
 
 export interface ICommand {
-  execute(robot: Robot): void;
+  execute(): void;
+}
+
+export interface IcreateCommand {
+  robot: Robot;
+  position?: Position;
+  direction?: Direction;
 }
