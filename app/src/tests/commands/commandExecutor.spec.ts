@@ -12,8 +12,8 @@ describe('CommandExecutor', () => {
     const mockRobot = {
       place: jest.fn(),
       move: jest.fn(),
-      left: jest.fn(),
-      right: jest.fn(),
+      rotateLeft: jest.fn(),
+      rotateRight: jest.fn(),
       report: jest.fn(),
       isPlaced: jest.fn().mockReturnValue(false),
     };
