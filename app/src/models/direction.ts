@@ -1,21 +1,21 @@
 import { Injectable } from '@nestjs/common';
-import { Result } from 'src/application/result';
-import { DIRECTION, STEPS } from 'src/constants/constants';
-import { IDirectionHandler } from 'src/interfaces/directionInterface';
-import { Direction, Position } from 'src/interfaces/genericInterface';
+import { Result } from '../application/result';
+import { DIRECTION, TURN } from '../constants/constants';
+import { IDirectionHandler } from '../interfaces/directionInterface';
+import { Direction, Position } from '../interfaces/genericInterface';
 
 /**
- * Handles direction rotations based on predefined steps.
+ * Handles direction rotations based on predefined turns.
  */
 @Injectable()
 export class DirectionHandler implements IDirectionHandler {
   private readonly directionSequence: Direction[] = Object.values(DIRECTION);
 
   /**
-   * Rotates the current direction by a specified number of steps.
+   * Rotates the current direction by a specified number of turns.
    *
    * @param currentDirection The current direction.
-   * @param step The number of steps to rotate. Positive for clockwise, negative for counter-clockwise.
+   * @param step The number of turns to rotate. Positive for clockwise, negative for counter-clockwise.
    * @returns The new direction after rotation.
    */
   private rotateDirection(
@@ -40,7 +40,7 @@ export class DirectionHandler implements IDirectionHandler {
    * @returns The new direction after rotating left.
    */
   left(currentDirection: Direction): Direction {
-    return this.rotateDirection(currentDirection, STEPS.LEFT);
+    return this.rotateDirection(currentDirection, TURN.LEFT);
   }
 
   /**
@@ -50,7 +50,7 @@ export class DirectionHandler implements IDirectionHandler {
    * @returns The new direction after rotating right.
    */
   right(currentDirection: Direction): Direction {
-    return this.rotateDirection(currentDirection, STEPS.RIGHT);
+    return this.rotateDirection(currentDirection, TURN.RIGHT);
   }
 
   /**

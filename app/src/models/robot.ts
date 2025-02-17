@@ -1,8 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { SERVICE_IDENTIFIER } from 'src/constants/identifiers';
-import { IContextAwareLogger } from 'src/infrastructure/loggerInterface';
-import { IDirectionHandler } from 'src/interfaces/directionInterface';
-import { IRobot, RobotState } from 'src/interfaces/robotInterface';
+import { SERVICE_IDENTIFIER } from '../constants/identifiers';
+import { IContextAwareLogger } from '../infrastructure/loggerInterface';
+import { IDirectionHandler } from '../interfaces/directionInterface';
+import { IRobot, RobotState } from '../interfaces/robotInterface';
 import { Direction, Position } from './../interfaces/genericInterface';
 import { Table } from './table';
 
@@ -77,7 +77,7 @@ export class Robot implements IRobot {
 
       if (!this.table.isValidPosition(newPosition)) {
         this.logger.warn(
-          'Robot',
+          'Robot.move',
           `Move would result in invalid position: ${JSON.stringify(newPosition)}`,
         );
         return false;
@@ -86,7 +86,7 @@ export class Robot implements IRobot {
       this.position = newPosition;
       this.state = { ...this.state, position: newPosition };
       this.logger.log(
-        'Robot',
+        'Robot.move',
         `Robot moved to ${this.position.x},${this.position.y}`,
       );
       return true;
@@ -104,7 +104,10 @@ export class Robot implements IRobot {
    */
   rotateLeft(): boolean {
     if (!this.isPlaced()) {
-      this.logger.warn('Robot', 'Robot must be placed before rotating.');
+      this.logger.warn(
+        'Robot.rotateLeft',
+        'Robot must be placed before rotating.',
+      );
       return false;
     }
     // Non-null assertion operator because isPlaced() checks for undefined

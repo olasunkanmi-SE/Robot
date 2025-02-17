@@ -1,17 +1,13 @@
 import { BadRequestException } from '@nestjs/common';
-import { Result } from 'src/application/result';
-import { ApplicationLogger } from 'src/infrastructure/logger';
+import { Result } from '../application/result';
 import { Dimension, Position } from '../interfaces/genericInterface';
-import { ITable } from 'src/interfaces/tableInterface';
+import { ITable } from '../interfaces/tableInterface';
 
 export class Table implements ITable {
   private _dimension: Dimension;
   private _origin: Position;
-  private readonly logger: ApplicationLogger;
 
-  constructor() {
-    this.logger = new ApplicationLogger('Table');
-  }
+  constructor() {}
 
   set dimension(dimension: Dimension) {
     this._dimension = dimension;

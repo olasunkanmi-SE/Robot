@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { SERVICE_IDENTIFIER } from './constants/identifiers';
 import { ApplicationLogger } from './infrastructure/logger';
@@ -9,7 +8,6 @@ import { Robot } from './models';
 
 @Module({
   imports: [],
-  controllers: [AppController],
   providers: [
     AppService,
     {
