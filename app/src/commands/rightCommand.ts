@@ -1,7 +1,7 @@
-import { SERVICE_IDENTIFIER } from 'src/constants/identifiers';
+import { SERVICE_IDENTIFIER } from '../constants/identifiers';
 import { Command } from './base';
 import { Inject } from '@nestjs/common';
-import { IRobot } from 'src/interfaces/robotInterface';
+import { IRobot } from '../interfaces/robotInterface';
 
 export class RightCommand extends Command {
   constructor(

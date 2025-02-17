@@ -1,7 +1,7 @@
 import { Inject } from '@nestjs/common';
-import { Command } from 'src/commands';
-import { SERVICE_IDENTIFIER } from 'src/constants/identifiers';
-import { IRobot } from 'src/interfaces/robotInterface';
+import { Command } from '../commands';
+import { SERVICE_IDENTIFIER } from '../constants/identifiers';
+import { IRobot } from '../interfaces/robotInterface';
 
 export class CommandExecutor {
   private isPlaced: boolean = false;
@@ -10,15 +10,17 @@ export class CommandExecutor {
     @Inject(SERVICE_IDENTIFIER.IRobot) private readonly robot: IRobot,
   ) {}
 
+  get placed() {
+    return this.isPlaced;
+  }
+
   execute(command: Command): void {
     if (!command) return;
-
     const isPlaceCommand: boolean =
       command instanceof Command && 'position' in command;
     if (isPlaceCommand) {
       this.isPlaced = this.robot.isPlaced();
     }
-
     command.execute();
   }
 }

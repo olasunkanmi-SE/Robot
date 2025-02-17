@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { Result } from 'src/application/result';
+import { Result } from '../../application/result';
 import { DIRECTION } from '../../constants/constants';
 import { DirectionHandler } from '../../models';
 

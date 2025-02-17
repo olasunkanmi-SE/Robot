@@ -1,8 +1,8 @@
 import { Inject } from '@nestjs/common';
-import { SERVICE_IDENTIFIER } from 'src/constants/identifiers';
-import { IContextAwareLogger } from 'src/infrastructure/loggerInterface';
+import { SERVICE_IDENTIFIER } from '../constants/identifiers';
+import { IContextAwareLogger } from '../infrastructure/loggerInterface';
 import { Command } from './base';
-import { IRobot } from 'src/interfaces/robotInterface';
+import { IRobot } from '../interfaces/robotInterface';
 
 export class ReportCommand extends Command {
   constructor(

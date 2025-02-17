@@ -6,11 +6,11 @@ import {
   PlaceCommand,
   ReportCommand,
   RightCommand,
-} from 'src/commands';
-import { DIRECTION } from 'src/constants/constants';
-import { SERVICE_IDENTIFIER } from 'src/constants/identifiers';
-import { IContextAwareLogger } from 'src/infrastructure/loggerInterface';
-import { IRobot } from 'src/interfaces/robotInterface';
+} from '../commands';
+import { DIRECTION } from '../constants/constants';
+import { SERVICE_IDENTIFIER } from '../constants/identifiers';
+import { IContextAwareLogger } from '../infrastructure/loggerInterface';
+import { IRobot } from '../interfaces/robotInterface';
 
 interface Position {
   x: number;

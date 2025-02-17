@@ -1,4 +1,4 @@
-import { Table } from 'src/models';
+import { Table } from '../models';
 import { Direction, Position } from './genericInterface';
 
 export interface IRobot {

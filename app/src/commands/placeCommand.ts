@@ -1,7 +1,7 @@
 import { Inject } from '@nestjs/common';
-import { SERVICE_IDENTIFIER } from 'src/constants/identifiers';
-import { Direction, Position } from 'src/interfaces/genericInterface';
-import { IRobot } from 'src/interfaces/robotInterface';
+import { SERVICE_IDENTIFIER } from '../constants/identifiers';
+import { Direction, Position } from '../interfaces/genericInterface';
+import { IRobot } from '../interfaces/robotInterface';
 import { Command } from './base';
 
 export class PlaceCommand extends Command {

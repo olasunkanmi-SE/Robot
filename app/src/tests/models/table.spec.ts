@@ -1,4 +1,4 @@
-import { Result } from 'src/application/result';
+import { Result } from '../../application/result';
 import { Position } from '../../interfaces/genericInterface';
 import { Table } from '../../models';
 
