@@ -15,11 +15,6 @@ export class CommandExecutor {
 
     const isPlaceCommand: boolean =
       command instanceof Command && 'position' in command;
-
-    if (!this.isPlaced && !isPlaceCommand) {
-      return;
-    }
-
     if (isPlaceCommand) {
       this.isPlaced = this.robot.isPlaced();
     }

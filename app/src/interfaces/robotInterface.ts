@@ -1,3 +1,4 @@
+import { Table } from 'src/models';
 import { Direction, Position } from './genericInterface';
 
 export interface IRobot {
@@ -7,6 +8,7 @@ export interface IRobot {
   rotateRight(): boolean;
   report(): string | undefined;
   isPlaced(): boolean;
+  table: Table;
 }
 
 export type RobotState = {

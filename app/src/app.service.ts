@@ -1,4 +1,4 @@
-import { Inject } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import * as readline from 'readline';
 import { SERVICE_IDENTIFIER } from './constants/identifiers';
 import { IContextAwareLogger } from './infrastructure/loggerInterface';
@@ -6,7 +6,13 @@ import { IRobot } from './interfaces/robotInterface';
 import { Table } from './models';
 import { CommandExecutor } from './services/commandExecutor';
 import { CommandParser } from './services/commandParser';
+import { Result } from './application/result';
+import {
+  TABLE_DEFAULT_TABLE_DIMENSION,
+  TABLE_ORIGIN,
+} from './constants/constants';
 
+@Injectable()
 export class AppService {
   private readonly table: Table;
   private readonly parser: CommandParser;
@@ -18,8 +24,8 @@ export class AppService {
     @Inject(SERVICE_IDENTIFIER.IContextAwareLogger)
     private readonly logger: IContextAwareLogger,
   ) {
-    this.table = new Table();
-    this.table.dimension = { width: 5, height: 5 };
+    this.table = this.initializeTable(TABLE_DEFAULT_TABLE_DIMENSION);
+    this.robot.table = this.table;
     this.parser = new CommandParser(this.robot, this.logger);
     this.executor = new CommandExecutor(this.robot);
 
@@ -29,29 +35,57 @@ export class AppService {
     });
   }
 
+  private initializeTable(dimension: { width: number; height: number }): Table {
+    try {
+      const tableResult = Table.create(dimension);
+
+      if (!tableResult.isSuccess) {
+        Result.fail('Table initialization failed');
+        throw new BadRequestException('Failed to initialize the table.'); // Provide a more informative message
+      }
+
+      const table = tableResult.getValue();
+      // Non-null assertion operator because tableResult.isSuccess checks for failure
+      table!.origin = TABLE_ORIGIN;
+      return table!;
+    } catch (error) {
+      this.logger.error('AppService.initializeTable', String(error));
+      throw new Error(String(error));
+    }
+  }
+
   start(): void {
+    this.logger.log('AppService', 'Toy Robot Simulator started');
     console.log('Toy Robot Simulator');
     console.log('Enter commands (type "EXIT" to quit):');
 
     this.rl.on('line', (input: string) => {
-      if (input.trim().toUpperCase() === 'EXIT') {
-        this.rl.close();
-        return;
-      }
-
-      try {
-        const command = this.parser.parse(input);
-        if (command) {
-          this.executor.execute(command);
-        }
-      } catch (error) {
-        console.error(`Error processing command: ${error}`);
-      }
+      this.processCommand(input);
     });
 
     this.rl.on('close', () => {
       console.log('Application terminated.');
+      this.logger.log('AppService', 'Application terminated.');
       process.exit(0);
     });
+  }
+
+  private processCommand(input: string): void {
+    const command = input.trim().toUpperCase();
+
+    if (command === 'EXIT') {
+      this.rl.close();
+      return;
+    }
+
+    try {
+      const parsedCommand = this.parser.parse(input);
+      if (parsedCommand) {
+        this.executor.execute(parsedCommand);
+      }
+    } catch (error) {
+      this.logger.error('Command processing error', String(error));
+      throw new Error(String(error));
+    }
   }
 }

@@ -1,6 +1,6 @@
 import { Position } from 'src/interfaces/genericInterface';
 
-export const DEFAULT_TABLE_DIMENSION = {
+export const TABLE_DEFAULT_TABLE_DIMENSION = {
   width: 5,
   height: 5,
 };

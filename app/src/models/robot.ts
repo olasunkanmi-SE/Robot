@@ -4,21 +4,23 @@ import { IContextAwareLogger } from 'src/infrastructure/loggerInterface';
 import { IDirectionHandler } from 'src/interfaces/directionInterface';
 import { IRobot, RobotState } from 'src/interfaces/robotInterface';
 import { Direction, Position } from './../interfaces/genericInterface';
-import { ITable } from 'src/interfaces/tableInterface';
+import { Table } from './table';
 
 @Injectable()
 export class Robot implements IRobot {
   private position: Position | null;
   private direction: Direction | null;
   private state: RobotState | null = null;
+  public table: Table;
 
   constructor(
     @Inject(SERVICE_IDENTIFIER.IDirectionHandler)
     private readonly directionHandler: IDirectionHandler,
     @Inject(SERVICE_IDENTIFIER.IContextAwareLogger)
     private readonly logger: IContextAwareLogger,
-    @Inject(SERVICE_IDENTIFIER.ITable) private readonly table: ITable,
-  ) {}
+  ) {
+    this.table = new Table();
+  }
 
   /**
    * Places the robot on the table at the given position and direction.
@@ -43,7 +45,7 @@ export class Robot implements IRobot {
     this.state = { position: this.position, direction: this.direction };
 
     this.logger.log(
-      'Robot',
+      'Robot.place',
       `Robot placed at ${this.position.x},${this.position.y} facing ${this.direction}`,
     );
     return true;
@@ -56,34 +58,42 @@ export class Robot implements IRobot {
    * @throws {BadRequestException} If the robot has not been placed yet.
    */
   move(): boolean {
-    if (!this.state) return false;
+    try {
+      if (!this.state) {
+        this.logger.warn('Robot', 'Robot must be placed before moving.');
+        return false;
+      }
 
-    if (!this.isPlaced()) {
-      this.logger.warn('Robot', 'Robot must be placed before moving.');
-      return false;
-    }
+      if (!this.isPlaced()) {
+        this.logger.warn('Robot', 'Robot must be placed before moving.');
+        return false;
+      }
+      // Non-null assertion operator because isPlaced() checks for undefined
+      const { x, y } = this.directionHandler.getNextPosition(this.direction!);
+      const newPosition: Position = {
+        x: this.position!.x + x,
+        y: this.position!.y + y,
+      };
 
-    const { x, y } = this.directionHandler.getNextPosition(this.direction!);
-    const newPosition: Position = {
-      x: this.position!.x + x,
-      y: this.position!.y + y,
-    };
+      if (!this.table.isValidPosition(newPosition)) {
+        this.logger.warn(
+          'Robot',
+          `Move would result in invalid position: ${JSON.stringify(newPosition)}`,
+        );
+        return false;
+      }
 
-    if (!this.table.isValidPosition(newPosition)) {
-      this.logger.warn(
+      this.position = newPosition;
+      this.state = { ...this.state, position: newPosition };
+      this.logger.log(
         'Robot',
-        `Move would result in invalid position: ${JSON.stringify(newPosition)}`,
+        `Robot moved to ${this.position.x},${this.position.y}`,
       );
-      return false;
+      return true;
+    } catch (error: any) {
+      this.logger.log('Robot.move', String(error));
+      throw new Error(String(error));
     }
-
-    this.position = newPosition;
-    this.state = { ...this.state, position: newPosition };
-    this.logger.log(
-      'Robot',
-      `Robot moved to ${this.position.x},${this.position.y}`,
-    );
-    return true;
   }
 
   /**
@@ -97,10 +107,10 @@ export class Robot implements IRobot {
       this.logger.warn('Robot', 'Robot must be placed before rotating.');
       return false;
     }
-
+    // Non-null assertion operator because isPlaced() checks for undefined
     this.direction = this.directionHandler.left(this.direction!);
     this.logger.log(
-      'Robot',
+      'Robot.rotateLeft',
       `Robot rotated left, now facing ${this.direction}`,
     );
     this.state = {
@@ -122,10 +132,10 @@ export class Robot implements IRobot {
       this.logger.warn('Robot', 'Robot must be placed before rotating.');
       return false;
     }
-
-    this.direction = this.directionHandler.right(this.direction!); // Non-null assertion operator because isPlaced() checks for undefined
+    // Non-null assertion operator because isPlaced() checks for undefined
+    this.direction = this.directionHandler.right(this.direction!);
     this.logger.log(
-      'Robot',
+      'Robot.rotateRight',
       `Robot rotated right, now facing ${this.direction}`,
     );
     this.state = {
@@ -148,7 +158,7 @@ export class Robot implements IRobot {
     }
 
     const reportString = `${this.position!.x},${this.position!.y},${this.direction}`; // Non-null assertion operator because isPlaced() checks for undefined
-    this.logger.log('Robot', `Robot report: ${reportString}`);
+    this.logger.log('Robot.report', `Robot report: ${reportString}`);
     return reportString;
   }
 
@@ -161,14 +171,12 @@ export class Robot implements IRobot {
     return this.position !== undefined && this.direction !== undefined;
   }
 
+  /**
+   * Retrieves the current state of the robot.
+   *
+   * @returns {RobotState | null} The current state of the robot, or null if the state is not set.
+   */
   getState(): RobotState | null {
     return this.state;
-  }
-
-  /**
-   * Validates the command.  Currently a placeholder.  Can be expanded to validate command sequences.
-   */
-  commandValidation(): void {
-    // Place must always come first - Implementation can be added here.
   }
 }

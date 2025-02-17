@@ -51,18 +51,23 @@ export class Table implements ITable {
    * @param origin The origin (top-left corner) of the table.
    * @returns A Result object containing the Table instance on success, or an error on failure.
    */
-  static create(): Result<Table> {
+  static create(dimension?: Dimension): Result<Table> {
     try {
+      if (dimension) {
+        Table.validateDimensions(dimension);
+      }
       const table = new Table();
+      if (dimension) {
+        table._dimension = dimension;
+      }
       return Result.ok(table);
     } catch (error) {
       return Result.fail<Table>((error as Error).message);
     }
   }
 
-  private validateDimensions(dimension: Dimension): void {
+  static validateDimensions(dimension: Dimension): void {
     if (dimension.height <= 0 || dimension.width <= 0) {
-      this.logger.error('Table dimensions must be positive');
       throw new BadRequestException('Table dimensions must be positive');
     }
   }
