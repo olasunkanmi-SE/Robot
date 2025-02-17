@@ -68,10 +68,3 @@ The application follows this general flow for processing commands:
 5. `CommandExecutor` executes the command on the `Robot` instance
 6. The `Robot` updates its state based on the command and the `Table` constraints
 7. If it's a REPORT command, the robot's state is output to the console
-
-```
-[User Input] -> [AppService] -> [CommandParser] -> [CommandExecutor] -> [Robot] -> [Table]
-                                                                     -> [Output]
-```
-
-Note: The `DirectionHandler` is used by the `Robot` to manage rotations and calculate next positions based on the current direction.
