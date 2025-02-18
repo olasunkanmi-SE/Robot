@@ -1,0 +1,4 @@
+Handle error properly
+Create a memory to keep history of commands to check if place has been called.
+Currently LEFT, REPORT command throws error for non placed
+MOVE Doesnt
