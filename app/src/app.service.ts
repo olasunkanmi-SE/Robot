@@ -41,7 +41,7 @@ export class AppService {
 
       if (!tableResult.isSuccess) {
         Result.fail('Table initialization failed');
-        throw new BadRequestException('Failed to initialize the table.'); // Provide a more informative message
+        throw new BadRequestException('Failed to initialize the table.');
       }
 
       const table = tableResult.getValue();

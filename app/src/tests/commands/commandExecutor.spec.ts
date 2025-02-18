@@ -52,17 +52,16 @@ describe('CommandExecutor', () => {
         direction: 'NORTH',
       }; // Mimic a "place command"
       commandExecutor.execute(mockCommand as Command);
-      expect(commandExecutor.placed).toBe(false); // the isPlaced boolean should be false at the beginning.
+      expect(commandExecutor.placed).toBe(false);
       expect(mockCommand.execute).toHaveBeenCalled();
     });
 
     it('should not change isPlaced if the command is not a place command', () => {
-      // Simulate the robot already being placed
       (robot.isPlaced as jest.Mock).mockReturnValue(true);
-      commandExecutor['isPlaced'] = false; // Ensure isPlaced starts as false
-      const mockCommand = { execute: jest.fn() }; // Not a place command
+      commandExecutor['isPlaced'] = false;
+      const mockCommand = { execute: jest.fn() };
       commandExecutor.execute(mockCommand as Command);
-      expect(commandExecutor.placed).toBe(false); // Should remain false
+      expect(commandExecutor.placed).toBe(false);
       expect(mockCommand.execute).toHaveBeenCalled();
     });
   });

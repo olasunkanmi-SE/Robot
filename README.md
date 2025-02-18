@@ -7,6 +7,46 @@ Key features include:
 - Reporting the current position and direction of the robot
 - Preventing the robot from falling off the table's edge
 
+# Command-Based Architecture
+
+```mermaid
+graph TD
+    subgraph AppService
+        A[AppService] --> B[Initialize]
+        A --> C[Command Processing]
+        B --> D{Table Creation}
+        D --> E[Table Object]
+        C --> F[Process Input]
+        F --> G{Command Type}
+    end
+
+    subgraph CommandHandling
+        G --> H[PLACE]
+        G --> I[MOVE]
+        G --> J[LEFT/RIGHT]
+        G --> K[REPORT]
+        
+        H & I & J & K --> L{Validation}
+        L --> M[Execute Command]
+    end
+
+    subgraph RobotActions
+        M --> N[Robot]
+        N --> O[Update Position]
+        N --> P[Update Direction]
+        N --> Q[Generate Report]
+    end
+
+    subgraph Validation
+        O & P --> R{Position Valid?}
+        R -->|Yes| S[Update State]
+        R -->|No| T[Warning]
+    end
+
+    classDef warning fill:#ffecec,stroke:#ff4444
+    class T warning
+```
+
 The application uses a command-based architecture, with separate command classes for each action (PLACE, MOVE, LEFT, RIGHT, REPORT). It also implements interfaces for the robot, table, and direction handling to ensure a modular and extensible design.
 
 
@@ -25,7 +65,7 @@ The application uses a command-based architecture, with separate command classes
 
 Prerequisites:
 - Node.js (version 18 or higher)
-- npm (version 6 or higher)
+- npm (version 8 or higher)
 
 Steps:
 1. Clone the repository
@@ -37,7 +77,7 @@ Steps:
 To start the application:
 
 ```bash
-npm run start
+npm run start:dev
 ```
 
 This will launch the Toy Robot Simulator. You can then enter commands to control the robot.
@@ -51,11 +91,12 @@ To run the tests:
 npm run test
 ```
 
-For end-to-end tests:
+test coverage:
 
 ```bash
-npm run test:e2e
+npm run test:cov
 ```
+
 
 ## Data Flow
 

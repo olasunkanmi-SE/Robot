@@ -2,8 +2,9 @@ import { Inject } from '@nestjs/common';
 import { Command } from '../commands';
 import { SERVICE_IDENTIFIER } from '../constants/identifiers';
 import { IRobot } from '../interfaces/robotInterface';
+import { ICommandExecution } from 'src/interfaces/commandExecutorInterface';
 
-export class CommandExecutor {
+export class CommandExecutor implements ICommandExecution {
   private isPlaced: boolean = false;
 
   constructor(

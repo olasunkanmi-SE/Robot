@@ -11,6 +11,7 @@ import { DIRECTION } from '../constants/constants';
 import { SERVICE_IDENTIFIER } from '../constants/identifiers';
 import { IContextAwareLogger } from '../infrastructure/loggerInterface';
 import { IRobot } from '../interfaces/robotInterface';
+import { ICommandParser } from 'src/interfaces/commandParserInterface';
 
 interface Position {
   x: number;
@@ -18,7 +19,7 @@ interface Position {
 }
 
 @Injectable()
-export class CommandParser {
+export class CommandParser implements ICommandParser {
   constructor(
     @Inject(SERVICE_IDENTIFIER.IRobot) private readonly robot: IRobot,
     @Inject(SERVICE_IDENTIFIER.IContextAwareLogger)
