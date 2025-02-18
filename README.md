@@ -1,5 +1,7 @@
 # Toy Robot Simulator
 
+## Command-Based Architecture
+
 Key features include:
 - Placing the robot on the table with a specific position and direction
 - Moving the robot one unit forward in the direction it's facing
