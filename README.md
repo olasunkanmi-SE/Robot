@@ -1,5 +1,45 @@
 # Toy Robot Simulator
 
+## High Level Architecture
+
+```mermaid
+graph TD
+    subgraph AppService
+        A[AppService] --> B[Initialize]
+        A --> C[Command Processing]
+        B --> D{Table Creation}
+        D --> E[Table Object]
+        C --> F[Process Input]
+        F --> G{Command Type}
+    end
+
+    subgraph CommandHandling
+        G --> H[PLACE]
+        G --> I[MOVE]
+        G --> J[LEFT/RIGHT]
+        G --> K[REPORT]
+        
+        H & I & J & K --> L{Validation}
+        L --> M[Execute Command]
+    end
+
+    subgraph RobotActions
+        M --> N[Robot]
+        N --> O[Update Position]
+        N --> P[Update Direction]
+        N --> Q[Generate Report]
+    end
+
+    subgraph Validation
+        O & P --> R{Position Valid?}
+        R -->|Yes| S[Update State]
+        R -->|No| T[Warning]
+    end
+
+    classDef warning fill:#ffecec,stroke:#ff4444
+    class T warning
+```
+
 Key features include:
 - Placing the robot on the table with a specific position and direction
 - Moving the robot one unit forward in the direction it's facing
